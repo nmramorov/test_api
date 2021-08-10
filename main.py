@@ -3,6 +3,7 @@ from decimal import Decimal, getcontext
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from src import crud, schemas, models
@@ -12,6 +13,19 @@ from src.db import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:8080"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 getcontext().prec = 4
 getcontext().rounding = 'ROUND_FLOOR'
