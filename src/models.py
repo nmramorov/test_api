@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DateTime, CheckConstraint, Enum
-from sqlalchemy.orm import relationship
+
+from datetime import datetime
 
 import enum
 
@@ -8,7 +9,7 @@ from .db import Base
 
 class ActionTypesEnum(enum.Enum):
     deposit = 'deposit'
-    credit = 'credit'
+    withdrawal = 'withdrawal'
     transfer = 'transfer'
 
 
@@ -29,5 +30,5 @@ class Transaction(Base):
     to = Column(Integer, ForeignKey('wallet.id'), nullable=False)
     from_ = Column(Integer, ForeignKey('wallet.id'))
     action_type = Column(Enum(ActionTypesEnum), nullable=False)
-    date = Column(DateTime, nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.now())
     amount = Column(DECIMAL, nullable=False)

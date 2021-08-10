@@ -6,7 +6,6 @@ from src.models import ActionTypesEnum
 
 
 class WalletBase(BaseModel):
-    id: int
     name: str
     owner: str
     balance: Decimal
@@ -17,6 +16,7 @@ class WalletCreate(WalletBase):
 
 
 class Wallet(WalletBase):
+    id: int
 
     class Config:
         orm_mode = True
