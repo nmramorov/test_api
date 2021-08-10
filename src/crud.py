@@ -10,26 +10,30 @@ from . import models
 getcontext().prec = 4
 
 
-def get_wallet(db: Session, wallet_id: int) -> Query:
+def get_wallet_by_id(db: Session, wallet_id: int) -> Query:
     return db.query(models.Wallet).filter(models.Wallet.id == wallet_id).first()
 
 
-def get_wallet_by_name(db: Session, owner: str) -> Query:
-    return db.query(models.Wallet).filter(models.Wallet.owner == owner).first()
+def get_wallet_by_name(db: Session, name: str) -> Query:
+    return db.query(models.Wallet).filter(models.Wallet.name == name).first()
 
 
 def get_wallets(db: Session, skip: int = 0, limit: int = 100) -> Query:
     return db.query(models.Wallet).offset(skip).limit(limit).all()
 
 
-def get_wallet_transactions(db: Session, date: str, action_type: str, skip: int = 0, limit: int = 100) -> Query:
+def get_transactions(db: Session, date: str, action_type: str, skip: int = 0, limit: int = 100) -> Query:
     return db.query(models.Transaction).filter(models.Transaction.action_type == action_type and
                                                models.Transaction.date == date)\
         .offset(skip).limit(limit).all()
 
 
-def create_wallet(db: Session, owner: str) -> models.Wallet:
-    db_wallet = models.Wallet(owner=owner, balance=0)
+def create_wallet(db: Session, owner: str, name: str) -> models.Wallet:
+    db_query = db.query(models.Wallet).filter(models.Wallet.name == name).first()
+    if db_query:
+        raise Exception
+
+    db_wallet = models.Wallet(owner=owner, name=name, balance=0)
     db.add(db_wallet)
     db.commit()
     db.refresh(db_wallet)
@@ -39,7 +43,7 @@ def create_wallet(db: Session, owner: str) -> models.Wallet:
 def create_transaction(db: Session, to: Optional[int],
                        from_: Optional[int],
                        action_type: models.ActionTypesEnum,
-                       amount: decimal) -> models.Transaction:
+                       amount: Decimal) -> models.Transaction:
     db_transaction = models.Transaction(to=to,
                                         from_=from_,
                                         action_type=action_type,
@@ -55,7 +59,7 @@ def operate_wallet(db: Session,
                    wallet_id: Optional[int],
                    from_: Optional[int],
                    action_type: models.ActionTypesEnum,
-                   amount: decimal) -> models.Wallet:
+                   amount: Decimal) -> models.Wallet:
 
     if action_type == models.ActionTypesEnum.deposit:
         wallet = db.query(models.Wallet).filter(models.Wallet.id == wallet_id)
@@ -82,7 +86,7 @@ def operate_wallet(db: Session,
 def transfer_money_to_wallet(db: Session,
                              to: int,
                              from_: int,
-                             amount: decimal) -> models.Wallet:
+                             amount: Decimal) -> models.Wallet:
     wallet_to = db.query(models.Wallet).filter(models.Wallet.id == to)
     wallet_from = db.query(models.Wallet).filter(models.Wallet.id == from_)
 
@@ -99,6 +103,3 @@ def transfer_money_to_wallet(db: Session,
     db.refresh(wallet_from)
 
     return wallet_from
-
-
-
