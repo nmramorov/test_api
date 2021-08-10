@@ -1,4 +1,3 @@
-from datetime import datetime
 from decimal import *
 from typing import Optional, List
 
@@ -6,8 +5,8 @@ from sqlalchemy.orm import Session, Query
 
 from . import models, app_exceptions
 
-
 getcontext().prec = 4
+getcontext().rounding = 'ROUND_FLOOR'
 
 
 def get_wallet_by_id(db: Session, wallet_id: int) -> Query:
@@ -29,8 +28,8 @@ def get_transactions(db: Session, date: str, action_type: models.ActionTypesEnum
         .offset(skip).limit(limit).all()
 
 
-def create_wallet(db: Session, owner: str, name: str) -> models.Wallet:
-    db_wallet = models.Wallet(owner=owner, name=name, balance=0)
+def create_wallet(db: Session, owner: str, name: str, balance: Decimal = 0) -> models.Wallet:
+    db_wallet = models.Wallet(owner=owner, name=name, balance=balance)
     db.add(db_wallet)
     db.commit()
     db.refresh(db_wallet)

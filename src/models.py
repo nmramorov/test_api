@@ -1,8 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DateTime, CheckConstraint, Enum
-
+import enum
 from datetime import datetime
 
-import enum
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum, Numeric, Date
 
 from .db import Base
 
@@ -19,8 +18,7 @@ class Wallet(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False, index=True)
     owner = Column(String, nullable=False)
-    balance = Column(DECIMAL(precision=22, scale=4), nullable=False)
-    CheckConstraint('balance >= 0', name='balance_check')
+    balance = Column(Numeric(precision=12, scale=4), nullable=False)
 
 
 class Transaction(Base):
@@ -30,5 +28,5 @@ class Transaction(Base):
     to = Column(Integer, ForeignKey('wallet.id'), nullable=False)
     from_ = Column(Integer, ForeignKey('wallet.id'))
     action_type = Column(Enum(ActionTypesEnum), nullable=False)
-    date = Column(DateTime, nullable=False, default=datetime.now())
-    amount = Column(DECIMAL, nullable=False)
+    date = Column(Date, nullable=False, default=datetime.today())
+    amount = Column(Numeric(precision=100, scale=4), nullable=False)

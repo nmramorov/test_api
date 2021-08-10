@@ -1,8 +1,12 @@
-from decimal import Decimal
+from datetime import date
+from decimal import *
 
 from pydantic import BaseModel
 
 from src.models import ActionTypesEnum
+
+getcontext().prec = 4
+getcontext().rounding = 'ROUND_FLOOR'
 
 
 class WalletBase(BaseModel):
@@ -27,7 +31,7 @@ class TransactionBase(BaseModel):
     to: int
     from_: int
     action_type: ActionTypesEnum
-    datetime: str
+    date: date
     amount: Decimal
 
 
