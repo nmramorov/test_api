@@ -1,7 +1,8 @@
+from datetime import date
 from decimal import *
 from typing import Optional, List
 
-from sqlalchemy.orm import Session, Query
+from sqlalchemy.orm import Session
 
 from . import models, app_exceptions
 
@@ -9,22 +10,25 @@ getcontext().prec = 4
 getcontext().rounding = 'ROUND_FLOOR'
 
 
-def get_wallet_by_id(db: Session, wallet_id: int) -> Query:
+def get_wallet_by_id(db: Session, wallet_id: int) -> models.Wallet:
     return db.query(models.Wallet).filter(models.Wallet.id == wallet_id).first()
 
 
-def get_wallet_by_name(db: Session, name: str) -> Query:
+def get_wallet_by_name(db: Session, name: str) -> models.Wallet:
     return db.query(models.Wallet).filter(models.Wallet.name == name).first()
 
 
-def get_wallets(db: Session, skip: int = 0, limit: int = 100) -> Query:
+def get_wallets(db: Session, skip: int = 0, limit: int = 100) -> List[models.Wallet]:
     return db.query(models.Wallet).offset(skip).limit(limit).all()
 
 
-def get_transactions(db: Session, date: str, action_type: models.ActionTypesEnum, skip: int = 0,
-                     limit: int = 100) -> Query:
+def get_transactions(db: Session,
+                     transaction_date: date,
+                     action_type: models.ActionTypesEnum,
+                     skip: int = 0,
+                     limit: int = 100) -> List[models.Transaction]:
     return db.query(models.Transaction).filter(models.Transaction.action_type == action_type and
-                                               models.Transaction.date == date) \
+                                               models.Transaction.transaction_date == transaction_date) \
         .offset(skip).limit(limit).all()
 
 

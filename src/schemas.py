@@ -1,3 +1,4 @@
+
 from datetime import date
 from decimal import *
 
@@ -31,7 +32,7 @@ class TransactionBase(BaseModel):
     to: int
     from_: int
     action_type: ActionTypesEnum
-    date: date
+    transaction_date: date
     amount: Decimal
 
 

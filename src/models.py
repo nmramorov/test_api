@@ -28,5 +28,5 @@ class Transaction(Base):
     to = Column(Integer, ForeignKey('wallet.id'), nullable=False)
     from_ = Column(Integer, ForeignKey('wallet.id'))
     action_type = Column(Enum(ActionTypesEnum), nullable=False)
-    date = Column(Date, nullable=False, default=datetime.today())
+    transaction_date = Column(Date, nullable=False, default=datetime.date(datetime.today()))
     amount = Column(Numeric(precision=100, scale=4), nullable=False)

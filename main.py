@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal, getcontext
 from typing import List, Optional
 
@@ -55,12 +56,15 @@ def read_wallet(wallet_name: str, db: Session = Depends(get_db)):
 
 
 @app.get("/wallets/transactions/", response_model=List[schemas.Transaction])
-def read_transactions(date: str,
+def read_transactions(transaction_date: str,
                       action_type: models.ActionTypesEnum,
                       skip: int = 0,
                       limit: int = 100,
                       db: Session = Depends(get_db)):
-    transactions = crud.get_transactions(db=db, action_type=action_type, date=date, skip=skip, limit=limit)
+    transactions = crud.get_transactions(db=db, action_type=action_type,
+                                         transaction_date=date.fromisoformat(transaction_date.strip('"')),
+                                         skip=skip,
+                                         limit=limit)
     return transactions if transactions else HTTPException(status_code=400,
                                                            detail='There are no such transactions')
 
